@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class PSO:
     def __init__(self, n, dim, lower_bound, upper_bound, max_iters = 500):
@@ -9,6 +10,10 @@ class PSO:
         self.__acceleration_1 = 2
         self.__acceleration_2 = 2
         self.__max_iteration = max_iters
+        self.__lower = lower_bound
+        self.__upper = upper_bound
+        self.__velocity_max = upper_bound*2
+        self.__velocity_min = lower_bound*2
 
         self.__population = np.random.randint(low=lower_bound, high=upper_bound+1, size=( self.__population_size, self.__dimension))
         self.__position = self.__population + (self.__population * self.__velocity)
@@ -16,6 +21,7 @@ class PSO:
     def optimal(self, function):
         old_position = self.__position
         for i in range(self.__max_iteration):
+            old_position = np.clip(old_position, self.__lower, self.__upper)
             fitness = function(old_position)
             g_best_index = np.argmin(fitness, axis=0)
             min_fitness = min(fitness)
@@ -33,18 +39,19 @@ class PSO:
                     best_fitness = min_fitness
                 # update x_best
                 for i in range(old_fitness.shape[0]):
-                    if fitness[i] < old_fitness[i]:
+                    if abs(fitness[i]) < abs(old_fitness[i]):
                         x_best[i] = old_position[i]
                 
             # update velocity & position
             new_v = self.calculate_velocity(old_v, old_position, x_best, g_best)
+            new_v = np.clip(new_v, self.__velocity_min, self.__velocity_max)
             new_position = old_position + new_v
             
-            old_position = new_position
+            old_position = np.round(new_position, 1)
             old_v = new_v
             
 
-        return np.round(g_best, 4), np.round(best_fitness, 4)
+        return g_best, np.round(best_fitness, 4)
     
     def calculate_velocity(self, vi, curr_x, x_best, g_best):
         return self.__weight*vi + self.__acceleration_1*np.random.rand()*(x_best-curr_x) + self.__acceleration_2*np.random.rand()*(g_best-curr_x)
@@ -61,8 +68,10 @@ def evaluation(best_each_gbest, best_each_fitness, runs):
     # median
     g_best_median = np.median(best_each_gbest, axis=0)
     print("median:", g_best_median)
-    print("best fitness: ", np.round(iter_fitness_mean))
     print("mean fitness: ", np.mean(best_each_fitness))
+    print("best_each_fitness: ", np.round(best_each_fitness.flatten()))
+    print("best fitness: ", np.round(iter_fitness_mean))
+    
 
 def test(x):
     return x*x
@@ -75,14 +84,35 @@ def F2(x):
 
     return sum_x + prod_x
 
+def F3(x):
+    accum_sum = np.cumsum(np.absolute(x), axis=1)
+    power_x = np.power(accum_sum, 2)
+    
+    return np.sum(power_x, axis=1).reshape(-1, 1)
+
 def main():
     runs = 50
+    pop = 50
+    # F2
+    print("optimize F2 function")
     dim = 30
     best_each_gbest = np.zeros((runs, dim)) 
     best_each_fitness = np.zeros((runs, 1)) 
     for i in range(runs):
-        pso = PSO(50, dim, -10, 10, 500)
+        pso = PSO(pop, dim, -10, 10, 500)
         best_sofar, best_fitness = pso.optimal(F2)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
+
+    #F3
+    print("optimize F3 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -100, 100, 500)
+        best_sofar, best_fitness = pso.optimal(F3)
         best_each_gbest[i] = best_sofar
         best_each_fitness[i] = best_fitness
     evaluation(best_each_gbest, best_each_fitness, runs)
@@ -90,4 +120,4 @@ def main():
 if __name__=="__main__":
     main()
     # te_array = np.array([[2, 3, 2],[4, 6, 1]])
-    # print(F2(te_array))
+    # print(F3(te_array))
