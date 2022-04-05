@@ -114,6 +114,20 @@ def F12(x, a=10, k=100, m=4):
 
     return np.add((np.pi/x.shape[1])*(np.add(first, second)), third)
 
+def F13(x, a=5, k=100, m=4):
+    # u
+    u1 = np.where(x>a, k * np.power((x - a), m), 0)
+    u2 = np.where(x<(-1*a), k * np.power((-1*(x) - a), m), 0)
+    u = u1 + u2
+
+    # F
+    p_1 = np.sin(3*np.pi*x[:, :1])**2
+    p_2 = np.sum(np.multiply((x[:, :-1]-1)**2, (1 + np.sin(3*np.pi*x[:, 1:])**2)), axis=1).reshape(-1, 1)
+    p_3 = np.multiply((x[:, -1:]-1)**2, (1 + np.sin(2*np.pi*x[:, -1:])**2))
+    p = 0.1*(np.add(np.add(p_1, p_2), p_3))
+
+    return np.add(p, np.sum(u, axis=1).reshape(-1, 1))
+
 def main():
     runs = 50
     pop = 50
@@ -154,13 +168,25 @@ def main():
     # evaluation(best_each_gbest, best_each_fitness, runs)
 
     #F12
-    print("optimize F12 function")
+    # print("optimize F12 function")
+    # dim = 30
+    # best_each_gbest = np.zeros((runs, dim)) 
+    # best_each_fitness = np.zeros((runs, 1)) 
+    # for i in range(runs):
+    #     pso = PSO(pop, dim, -50, 50, 500)
+    #     best_sofar, best_fitness = pso.optimal(F12)
+    #     best_each_gbest[i] = best_sofar
+    #     best_each_fitness[i] = best_fitness
+    # evaluation(best_each_gbest, best_each_fitness, runs)
+
+    #F13
+    print("optimize F13 function")
     dim = 30
     best_each_gbest = np.zeros((runs, dim)) 
     best_each_fitness = np.zeros((runs, 1)) 
     for i in range(runs):
         pso = PSO(pop, dim, -50, 50, 500)
-        best_sofar, best_fitness = pso.optimal(F12)
+        best_sofar, best_fitness = pso.optimal(F13)
         best_each_gbest[i] = best_sofar
         best_each_fitness[i] = best_fitness
     evaluation(best_each_gbest, best_each_fitness, runs)
@@ -170,4 +196,4 @@ if __name__=="__main__":
     # te_array = np.array([[2, 3, 2],[4, 6, 1]])
     # te_array = np.array([[0, 0, 0],[0, 0, 0]])
     # print(F11(te_array))
-    # print(F12(te_array, 10, 100, 4))
+    # print(F13(te_array))
