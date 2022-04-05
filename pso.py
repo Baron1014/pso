@@ -90,6 +90,13 @@ def F3(x):
     
     return np.sum(power_x, axis=1).reshape(-1, 1)
 
+def F11(x):
+    sum_x = np.sum(np.power(x, 2)/4000, axis=1)
+    dim_index = np.arange(float(x.shape[1])) +1
+    prod_x = np.prod(np.divide(np.cos(x), np.sqrt(dim_index)), axis=1)
+    
+    return sum_x - prod_x + 1
+
 def main():
     runs = 50
     pop = 50
@@ -117,7 +124,19 @@ def main():
         best_each_fitness[i] = best_fitness
     evaluation(best_each_gbest, best_each_fitness, runs)
 
+    #F3
+    print("optimize F11 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -600, 600, 500)
+        best_sofar, best_fitness = pso.optimal(F11)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
+
 if __name__=="__main__":
     main()
     # te_array = np.array([[2, 3, 2],[4, 6, 1]])
-    # print(F3(te_array))
+    # print(F11(te_array))
