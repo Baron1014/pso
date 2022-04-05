@@ -61,6 +61,22 @@ def F14(x):
     aij = np.array([ai, aj])
 
     # function
-    p = np.array([1/(np.add(np.power(x[:, :1]-aij[0, j], 6), np.power(x[:, 1:]-aij[1, j], 6)) + j) for j in range(1, 25)]).reshape(-1, 2)
+    p = np.array([1/(np.add(np.power(x[:, :1]-aij[0, j-1], 6), np.power(x[:, 1:]-aij[1, j-1], 6)) + j) for j in range(1, 25)]).reshape(24,-1)
 
     return 1 / (0.002 + np.sum(p, axis=0))
+
+def F15(x):
+    # define ai & bi
+    ai = np.array([0.1957, 0.1947, 0.1735, 0.16, 0.0844, 0.0627, 
+                    0.0456, 0.0342, 0.0342, 0.0235, 0.0246])
+
+    bi = 1 / (np.array([0.25, 0.5, 1, 2, 4, 6, 8, 10, 12, 14, 16]))
+
+    # function
+    out = np.zeros((x.shape[0], 11))
+    for i in range(11):
+        num = np.multiply(x[:, 0], bi[i]**2 + bi[i]*x[:, 1])
+        den = bi[i]**2 + bi[i]*x[:, 2] + x[:, 3]
+        out[:, i] = (ai[i] - np.divide(num, den))**2
+
+    return np.sum(out, axis=1)

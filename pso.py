@@ -138,14 +138,26 @@ def main():
     #     best_each_fitness[i] = best_fitness
     # evaluation(best_each_gbest, best_each_fitness, runs)
 
-    #F14
-    print("optimize F14 function")
-    dim = 2
+    # #F14
+    # print("optimize F14 function")
+    # dim = 2
+    # best_each_gbest = np.zeros((runs, dim)) 
+    # best_each_fitness = np.zeros((runs, 1)) 
+    # for i in range(runs):
+    #     pso = PSO(pop, dim, -65, 65, 500)
+    #     best_sofar, best_fitness = pso.optimal(fit.F14)
+    #     best_each_gbest[i] = best_sofar
+    #     best_each_fitness[i] = best_fitness
+    # evaluation(best_each_gbest, best_each_fitness, runs)
+
+    #F15
+    print("optimize F15 function")
+    dim = 4
     best_each_gbest = np.zeros((runs, dim)) 
     best_each_fitness = np.zeros((runs, 1)) 
     for i in range(runs):
-        pso = PSO(pop, dim, -65, 65, 500)
-        best_sofar, best_fitness = pso.optimal(fit.F14)
+        pso = PSO(pop, dim, -5, 5, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F15)
         best_each_gbest[i] = best_sofar
         best_each_fitness[i] = best_fitness
     evaluation(best_each_gbest, best_each_fitness, runs)
@@ -154,6 +166,7 @@ if __name__=="__main__":
     main()
     # te_array = np.array([[2, 3, 2],[4, 6, 1]])
     # te_array = np.array([[0, 0, 0],[0, 0, 0]])
-    # te_array = np.array([[0, 0],[0, 0]])
+    # te_array = np.array([[0, 0],[0, 0], [0, 0]])
+    # te_array = np.array([[0, 0, 0, 0],[0, 0, 0, 0], [0, 0, 0, 0]])
     # print(F11(te_array))
-    # print(fit.F14(te_array))
+    # print(fit.F15(te_array))
