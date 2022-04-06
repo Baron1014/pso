@@ -80,3 +80,14 @@ def F15(x):
         out[:, i] = (ai[i] - np.divide(num, den))**2
 
     return np.sum(out, axis=1)
+
+def Gomez_Levy(x):
+    y = x[:, 1:]
+    xx = x[:, :1]
+    subject = -1*np.sin(4*np.pi*xx) + 2*(np.sin(2*np.pi*y)**2) <= 1.5
+    
+    xx = np.where(subject, xx, 999)
+
+    return 4*np.power(xx, 2) - 2.1*np.power(xx, 4) + 1/3*np.power(xx, 6) + np.multiply(xx, y) - 4*np.power(y, 2) + 4*np.power(y, 4)
+
+    

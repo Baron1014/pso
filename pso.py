@@ -2,7 +2,7 @@ import numpy as np
 import fitness as fit
 
 class PSO:
-    def __init__(self, n, dim, lower_bound, upper_bound, max_iters = 500):
+    def __init__(self, n, dim, lower_bound, upper_bound, max_iters = 500, GL=False):
         self.__population_size = n
         self.__dimension = dim
         self.__weight = 0.9
@@ -15,7 +15,12 @@ class PSO:
         self.__velocity_max = upper_bound*2
         self.__velocity_min = lower_bound*2
 
-        self.__population = np.random.randint(low=lower_bound, high=upper_bound+1, size=( self.__population_size, self.__dimension))
+        if GL:
+           self.__population = np.random.uniform(low=lower_bound, high=upper_bound, size=(self.__population_size, 1))
+           y = np.random.uniform(-1, 1, size=(self.__population.shape))
+           self.__population = np.concatenate([self.__population, y], axis=1)
+        else: 
+            self.__population = np.random.randint(low=lower_bound, high=upper_bound+1, size=( self.__population_size, self.__dimension))
         self.__position = self.__population + (self.__population * self.__velocity)
         
     def optimal(self, function):
@@ -47,7 +52,8 @@ class PSO:
             new_v = np.clip(new_v, self.__velocity_min, self.__velocity_max)
             new_position = old_position + new_v
             
-            old_position = np.round(new_position, 1)
+            # old_position = np.round(new_position, 1)
+            old_position = new_position
             old_v = new_v
             
 
@@ -69,8 +75,8 @@ def evaluation(best_each_gbest, best_each_fitness, runs):
     g_best_median = np.median(best_each_gbest, axis=0)
     print("median:", g_best_median)
     print("mean fitness: ", np.mean(best_each_fitness))
-    print("best_each_fitness: ", np.round(best_each_fitness.flatten()))
-    print("best fitness: ", np.round(iter_fitness_mean))
+    print("best_each_fitness: ", np.round(best_each_fitness.flatten(), 2))
+    print("best fitness: ", np.round(iter_fitness_mean, 2))
     
 
 
@@ -78,77 +84,77 @@ def evaluation(best_each_gbest, best_each_fitness, runs):
 def main():
     runs = 50
     pop = 50
-    # # F2
-    # print("optimize F2 function")
-    # dim = 30
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -10, 10, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F2)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    # F2
+    print("optimize F2 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -10, 10, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F2)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
-    # #F3
-    # print("optimize F3 function")
-    # dim = 30
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -100, 100, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F3)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    #F3
+    print("optimize F3 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -100, 100, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F3)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
-    # #F11
-    # print("optimize F11 function")
-    # dim = 30
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -600, 600, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F11)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    #F11
+    print("optimize F11 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -600, 600, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F11)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
     #F12
-    # print("optimize F12 function")
-    # dim = 30
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -50, 50, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F12)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    print("optimize F12 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -50, 50, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F12)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
-    # #F13
-    # print("optimize F13 function")
-    # dim = 30
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -50, 50, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F13)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    #F13
+    print("optimize F13 function")
+    dim = 30
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -50, 50, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F13)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
-    # #F14
-    # print("optimize F14 function")
-    # dim = 2
-    # best_each_gbest = np.zeros((runs, dim)) 
-    # best_each_fitness = np.zeros((runs, 1)) 
-    # for i in range(runs):
-    #     pso = PSO(pop, dim, -65, 65, 500)
-    #     best_sofar, best_fitness = pso.optimal(fit.F14)
-    #     best_each_gbest[i] = best_sofar
-    #     best_each_fitness[i] = best_fitness
-    # evaluation(best_each_gbest, best_each_fitness, runs)
+    #F14
+    print("optimize F14 function")
+    dim = 2
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -65, 65, 500)
+        best_sofar, best_fitness = pso.optimal(fit.F14)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
 
     #F15
     print("optimize F15 function")
@@ -162,6 +168,18 @@ def main():
         best_each_fitness[i] = best_fitness
     evaluation(best_each_gbest, best_each_fitness, runs)
 
+    # Gomez and Levy function(modified)
+    print("optimize Gomez and Levy function")
+    dim = 2
+    best_each_gbest = np.zeros((runs, dim)) 
+    best_each_fitness = np.zeros((runs, 1)) 
+    for i in range(runs):
+        pso = PSO(pop, dim, -1, 0.75, 500, GL=True)
+        best_sofar, best_fitness = pso.optimal(fit.Gomez_Levy)
+        best_each_gbest[i] = best_sofar
+        best_each_fitness[i] = best_fitness
+    evaluation(best_each_gbest, best_each_fitness, runs)
+
 if __name__=="__main__":
     main()
     # te_array = np.array([[2, 3, 2],[4, 6, 1]])
@@ -169,4 +187,4 @@ if __name__=="__main__":
     # te_array = np.array([[0, 0],[0, 0], [0, 0]])
     # te_array = np.array([[0, 0, 0, 0],[0, 0, 0, 0], [0, 0, 0, 0]])
     # print(F11(te_array))
-    # print(fit.F15(te_array))
+    # print(fit.Gomez_Levy(te_array))
